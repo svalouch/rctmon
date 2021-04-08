@@ -1,0 +1,67 @@
+---
+################################################################################
+# Example configuration. This configuration contains all the keys and their
+# respective  defaults (if any).
+
+# Section for connecting to the RCT device
+device:
+  # IP or host name
+  host: 127.0.0.1
+  # Network port
+  port: 8899
+
+# Monitoring the program
+prometheus:
+  # Enables the prometheus endpoint for monitoring.
+  enable: true
+  # Enables exposing the readings from the device via prometheus
+  exposition: false
+  # Port to which to bind on the bind-address
+  bind_port: 8082
+  # Address to which to bind
+  bind_address: 127.0.0.1
+
+# Settings for InfluxDB 1.8 or 2.x
+influxdb:
+  # Enables writing to InfluxDB
+  enable: false
+  # API endpoint where InfluxDB is listening
+  url: http://localhost:8086
+  # Auth token. For InfluxDB 1.8 use the format 'username:password'.
+  token: your-token
+  # Organization, InfluxDB 1.8 ignores this value
+  org: rct
+  # Bucket name, InfluxDB 1.8 uses this as database name
+  bucket: rct-inverter
+
+# Configuration for the logging behaviour of the application. It can be left
+# out entirely for most use-cases, the following shows the internal defaults
+# will be used then. If set, it is handed to "logging.config.dictConfig".
+# For more details, see:
+# https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
+logging:
+  # mandatory, always 1
+  version: 1
+
+  # log format specifications
+  formatters:
+    simple:
+      format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+  handlers:
+    # output to standard output
+    console:
+      class: logging.StreamHandler
+      formatter: simple
+      level: INFO
+      stream: ext://sys.stdout
+
+  # root-logger config, can be refined in "loggers:" section. It defines the
+  # default for all loggers
+  root:
+    level: INFO
+    handlers: [console]
+
+  # loggers:
+  #   rctmon.daemon:
+  #     handlers: [console]
