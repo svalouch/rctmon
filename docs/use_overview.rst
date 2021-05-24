@@ -128,7 +128,7 @@ which port to use. The port most likely doesn't need to be changed.
 Section "prometheus"
 ====================
 Prometheus is a metrics-based monitoring system. RctMon provides a compatible endpoint, which is bound to
-``http://127.0.0.1:8082/metrics`` by default (and can be viewed in a browser) if ``enable`` is *true*. It will expose
+``http://127.0.0.1:9831/metrics`` by default (and can be viewed in a browser) if ``enable`` is *true*. It will expose
 various details about the process and the Python interpreter itself, as well as providing a view into the internal
 state of the running application. This is useful for setting up alerting, e.g. if it can't reach the inverter.
 

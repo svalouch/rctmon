@@ -17,7 +17,7 @@ prometheus:
   # Enables exposing the readings from the device via prometheus
   exposition: false
   # Port to which to bind on the bind-address
-  bind_port: 8082
+  bind_port: 9831
   # Address to which to bind
   bind_address: 127.0.0.1
 

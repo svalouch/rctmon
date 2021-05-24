@@ -50,7 +50,7 @@ class PrometheusConfig(BaseModel):
     #: Address to bind to
     bind_address: str = '127.0.0.1'
     #: Port to bind to
-    bind_port: int = 8082
+    bind_port: int = 9831
 
 
 class RctMonConfig(BaseModel):

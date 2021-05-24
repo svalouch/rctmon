@@ -46,7 +46,7 @@ influxdb:
 
 Then start the application: `rctmon -c <configfile.yml> daemon`
 
-Quick peek at the metrics: `curl localhost:8082/metrics`. Note that the application needs to discover the inverters
+Quick peek at the metrics: `curl localhost:9831/metrics`. Note that the application needs to discover the inverters
 setup first (how many batteries, is a power switch available and so on) and thus takes a moment for all the metrics to
 appear.
 
