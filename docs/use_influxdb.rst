@@ -35,7 +35,7 @@ InfluxDB 2.x setup
 ===================
 
 Setting this up is rather complicated compared to earlier versions. Assuming you have access to an almighty admin user,
-let's create the full set of structured:
+let's create the full set of structures:
 
 #. An *organization*: ``influx org create -n rct-org``
 #. Create a user in that organization: ``influx user create -n rctmon -o rct-org``

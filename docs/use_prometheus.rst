@@ -95,6 +95,7 @@ They all have a label ``inverter`` which contains the name of the inverter. This
 smartphone app made by RCT (internally called ``android_description``).
 
 Percentages are generally in the range ``0.0`` to ``1.0``.
+
 .. warning::
 
    RctMon is still in development, individual metrics may be added, removed or renamed without prior notice!

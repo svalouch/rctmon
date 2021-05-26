@@ -260,6 +260,9 @@ class BatteryManager:
             # battery.soh
             if oid == 0x381B8BF9:
                 self.readings.soh = ensure_type(value, float)
+            # battery.soc
+            elif oid == 0x959930BF:
+                self.readings.soc = ensure_type(value, float)
             # battery.soc_target
             elif oid == 0x8B9FF008:
                 self.readings.soc_target = ensure_type(value, float)
@@ -269,6 +272,12 @@ class BatteryManager:
             # battery.bat_status
             elif oid == 0x70A2AF4F:
                 self.readings.bat_status = ensure_type(value, int)
+            # battery.status
+            elif oid == 0x71765BD8:
+                self.readings.status = ensure_type(value, int)
+            # battery.status2
+            elif oid == 0xDE3D20D:
+                self.readings.status2 = ensure_type(value, int)
             # battery.bat_impedance.impedance_fine
             elif oid == 0xE7B0E692:
                 self.readings.impedance_fine = ensure_type(value, float)
@@ -302,6 +311,9 @@ class BatteryManager:
             # power_mng.state
             elif oid == 0xDC667958:
                 self.readings.battery_state = ensure_type(value, int)
+            # battery.cycles
+            elif oid == 0xC0DF2978:
+                self.readings.cycles = ensure_type(value, int)
             else:
                 log.warning('_cb_readings: unhandled oid 0x%X', oid)
         except TypeError:

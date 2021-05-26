@@ -52,6 +52,8 @@ class BatteryReadings:
     battery_power: Optional[float] = None
     #: power_mng.state
     battery_state: Optional[int] = None
+    #: battery.soc
+    soc: Optional[float] = None
     #: battery.soh
     soh: Optional[float] = None
     #: battery.soc_target
@@ -74,6 +76,12 @@ class BatteryReadings:
     voltage: Optional[float] = None
     #: battery.current
     current: Optional[float] = None
+    #: battery.cycles
+    cycles: Optional[int] = None
+    #: battery.status
+    status: Optional[int] = None
+    #: battery.status2
+    status2: Optional[int] = None
 
 
 @dataclass
