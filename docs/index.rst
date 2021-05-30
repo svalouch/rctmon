@@ -19,7 +19,7 @@ that may occur by using the software. See also the *LICENSE* file for further in
    use_overview
    use_prometheus
    use_influxdb
-
+   flux_queries
 
 .. toctree::
    :maxdepth: 2
