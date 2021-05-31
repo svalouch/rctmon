@@ -182,6 +182,9 @@ class Daemon:
         except ConnectionResetError:
             socklog.warning('Socket receive: Connection reset')
             self._socket_disconnect()
+        except TimeoutError:
+            socklog.warning('Socket receive: Connection timed out')
+            self._socket_disconnect()
         else:
             recv_len = len(recv_data)
             socklog.debug('Got %d from socket', recv_len)
