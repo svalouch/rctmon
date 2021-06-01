@@ -287,6 +287,9 @@ class Readings:
     have_generator_b: Optional[bool] = None
     solar_generator_b = SolarGeneratorReadings()
 
+    #: prim_sm.state
+    inverter_status: Optional[int] = None
+
     household = HouseholdReadings()
     grid = GridReadings()
 
@@ -348,6 +351,11 @@ class Readings:
         if self.temperature_battery is not None:
             temp.add_metric([name, 'battery'], self.temperature_battery)
         yield temp
+
+        if self.inverter_status is not None:
+            ivs = GaugeMetricFamily('rctmon_inverter_status', 'Status of the inverter', labels=['inverter'])
+            ivs.add_metric([name], self.inverter_status)
+            yield ivs
 
         yield from self.household.collect(name)
         yield from self.grid.collect(name)

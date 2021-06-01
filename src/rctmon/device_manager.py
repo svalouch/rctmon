@@ -363,6 +363,18 @@ class DeviceManager:
                          inventory=False, handler=self._cb_grid)
 
             self.add_ids(['db.temp1', 'db.temp2', 'db.core_temp'], interval=60, inventory=False)
+            self.add_ids(['prim_sm.state'], interval=10, inventory=False, handler=self._cb_inverter)
+            self.add_ids(['energy.e_ac_day', 'energy.e_ac_month', 'energy.e_ac_year', 'energy.e_ac_total'],
+                         interval=300, inventory=False, handler=self._cb_inverter)
+
+    def _cb_inverter(self, oid: int, value: Any) -> None:
+        try:
+            if oid == 0x5F33284E:
+                self.readings.inverter_status = ensure_type(value, int)
+            else:
+                log.warning('_cb_inverter: unhandled oid 0x%X', oid)
+        except TypeError:
+            log.warning('Got wrong type %s for %s', type(value), R.get_by_id(oid).name)
 
     def _cb_household(self, oid: int, value: Any) -> None:
         try:
