@@ -52,6 +52,7 @@ class TSCollection:  # pylint: disable=too-few-public-methods
     last_contact_attempt = datetime.min
     last_contect_successful = datetime.min
     last_frame_sent = datetime.min
+    last_data_received = datetime.utcnow()
     last_influx_collect = datetime.utcnow()
     last_influx_flush = datetime.utcnow()  # we don't want to flush immediately
 
@@ -243,8 +244,10 @@ class Daemon:
                     self._ts.last_contact_attempt = datetime.utcnow()
                     log.info('Time to attempt reconnection')
                     self._socket_connect()
-
-            if self._connected:
+            elif self._ts.last_data_received < datetime.utcnow() - timedelta(seconds=180):
+                socklog.warning('No data received for 180 seconds, disconnecting')
+                self._socket_disconnect()
+            else:
                 MON_DEVICE_UP.set(1)
                 sockets_read = [self._socket]
                 sockets_exc = [self._socket]
@@ -287,6 +290,7 @@ class Daemon:
                 self._handle_socket_writable()
 
             if len(self._recv_buf) > 0:
+                self._ts.last_data_received = datetime.utcnow()
                 self._handle_received_data()
 
             if self._ts.last_influx_collect < datetime.utcnow() - timedelta(seconds=5):
