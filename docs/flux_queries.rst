@@ -132,11 +132,23 @@ Battery charge state and charge target
        |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
        |> yield(name: "Battery Charge")
 
-In this panel, the battery state of charge is ploted as a green line and the target is yellow. The two red lines top
-and bottom are thresholds that it should not exceed (7% and 97%), the orange line in the middle is the island limit of
-30%, these are set in the dashboard properties as "Thresholds":
+The following gallery displays a few different widgets, all of them support the visual indication of values via a
+change in color, except the basic graph panel which uses marker lines. All thresholds are identical: below 7% and above
+97% is red, between 30% and 7% yellow is used (between "Min SOC target" and "Min SOC target (island)"), and the middle
+section is green. These values can't be read from the database automatically, so they must be manually set for the
+setup at hand.
 
-.. image:: images/flux_grafana/Battery_charge_state.png
++------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------+
+| Graph / Timeseries                                                                                                           | Bar gauge                                                         |
++==============================================================================================================================+===================================================================+
+| .. image:: images/flux_grafana/Battery_charge_state_graph.png                                                                | .. image:: images/flux_grafana/Battery_charge_state_bar_gauge.png |
+|                                                                                                                              |                                                                   |
++---------------------------------------------------------------+--------------------------------------------------------------+                                                                   |
+| **Gauge**                                                     | **Stat**                                                     |                                                                   |
++---------------------------------------------------------------+--------------------------------------------------------------+                                                                   |
+| .. image:: images/flux_grafana/Battery_charge_state_gauge.png | .. image:: images/flux_grafana/Battery_charge_state_stat.png |                                                                   |
+|                                                               |                                                              |                                                                   |
++---------------------------------------------------------------+--------------------------------------------------------------+-------------------------------------------------------------------+
 
 System and battery temperatures
 ===============================
