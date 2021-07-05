@@ -12,8 +12,8 @@ Grafanas Flux support is still being worked on, and as such the comfort of using
 InfluxQL support yet. The main problem that this page is working around is the inability to remap label names easily in
 Grafana. This was done in InfluxQL by using ``GROUP BY tag(columnname)`` in the query and ``$_tag_columname`` in the
 ``ALIAS BY`` field of the query wizard. Here, for measurements that are similar to normal tables (they are pre-procesed by
-RctMon and contain sensible field names) a simple, beautifying `` `rename()
-<https://docs.influxdata.com/influxdb/v2.0/reference/flux/stdlib/built-in/transformations/rename/>`_`` is used.
+RctMon and contain sensible field names) a simple, beautifying `rename()
+<https://docs.influxdata.com/influxdb/v2.0/reference/flux/stdlib/built-in/transformations/rename/>`_ is used.
 
 But for the ``raw_data`` measurement, things are more complicated. The measurement uses tags to give meaning to the
 fields (of which there are a few, such as ``value_float`` or ``value_string``). So in order to query the AC voltage of
@@ -90,10 +90,126 @@ The result should look similar to this:
 
 .. image:: images/flux_grafana/AC_Voltage.png
 
-Querying from raw_data
-**********************
+Query examples
+**************
+All of the following examples query from the ``raw_data`` measurement and assume that the bucket is named
+``rct-inverter``.
 
-AC voltage from power sensor
-============================
+String voltage
+==============
+
+.. code-block:: javascript
+
+   from(bucket: "rct-inverter")
+       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+       |> filter(fn: (r) => r._measurement == "raw_data" and r._field == "value_float" and r.inverter == "PS 6.0 ASDF")
+       |> filter(fn: (r) => r.name == "g_sync.u_sg_avg[0]" or r.name == "g_sync.u_sg_avg[1]")
+       |> map(fn: (r) => ({
+           r with name:
+               if r.name == "g_sync.u_sg_avg[0]" then "A"
+               else "B"
+          }))
+       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+       |> yield(name: "DC Voltage")
+
+.. image:: images/flux_grafana/DC_Voltage.png
 
 
+Battery charge state and charge target
+======================================
+
+.. code-block:: javascript
+
+   from(bucket: "rct-inverter")
+       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+       |> filter(fn: (r) => r._measurement == "raw_data" and r._field == "value_float" and r.inverter == "PS 6.0 ASDF")
+       |> filter(fn: (r) => r.name == "battery.soc" or r.name == "battery.soc_target")
+       |> map(fn: (r) => ({
+           r with name:
+               if r.name == "battery.soc" then "Charge"
+               else "Target"
+           }))
+       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+       |> yield(name: "Battery Charge")
+
+In this panel, the battery state of charge is ploted as a green line and the target is yellow. The two red lines top
+and bottom are thresholds that it should not exceed (7% and 97%), the orange line in the middle is the island limit of
+30%, these are set in the dashboard properties as "Thresholds":
+
+.. image:: images/flux_grafana/Battery_charge_state.png
+
+System and battery temperatures
+===============================
+
+.. code-block:: javascript
+
+   from(bucket: "rct-inverter")
+       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+       |> filter(fn: (r) => r._measurement == "raw_data" and r._field == "value_float" and r.inverter == "PS 6.0 ASDF")
+       |> filter(fn: (r) => r.name == "battery.temperature" or r.name == "db.temp1" or r.name == "db.temp2" or r.name == "db.core_temp")
+       |> map(fn: (r) => ({
+           r with name:
+               if r.name == "battery.temperature" then "Battery"
+               else if r.name == "db.temp1" then "Temp1"
+               else if r.name == "db.temp2" then "Temp2" 
+               else "Core"
+           }))
+       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+       |> yield(name: "Temperatures")
+
+.. image:: images/flux_grafana/Temperatures.png
+
+Inverter status
+===============
+The status is encoded as an integer value that must be mapped to something more useful.
+
+.. code-block:: javascript
+
+   from(bucket: "rct-inverter")
+       |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+       |> filter(fn: (r) => r._measurement == "raw_data" and r._field == "value_int" and r.inverter == "PS 6.0 ASDF" and r.name == "prim_sm.state")
+       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+       |> yield(name: "Inverter Status")
+
+The mapping is as follows:
+
+===== ===================
+State Name
+===== ===================
+0     Standby
+1     Initialization
+2     Standby
+3     Efficiency
+4     Insulation check
+5     Island check
+6     Power check
+7     Symmetry
+8     Relais test
+9     Grid passive
+10    Prepare Bat Passive
+11    Battery Passive
+12    H/W check
+13    Feed in
+===== ===================
+
+In a typical environment, the states that will be encountered are:
+
+* 13 / `Feed in`: This is the desired state, meaning that there is enough power from solar generators and/or battery.
+* 6 / `Power check`: This state is encountered when there is not enough input power, meaning no sunlight and the
+  batteries `State of charge` (``battery.soc``) is at or below the value of `Min SOC target` (``power_mng.soc_min``).
+  Note that if the battery reaches the value set in `Min SOC target (island)` (``power_mng.soc_min_island``) the
+  battery will shut off, and if the solar generators are not producing power then the device will power off completely,
+  and can't be reached over the network until input power is restored (usually sunrise).
+* 5 / `Island check`: The state is briefly encountered when transitioning from `Feed in` to `Power check`.
+* 7 / `Symmetry`: The state is briefly encountered when transitioning from `Power check` to `Feed in`:
+
+One way to visualise this is to use the ``natel-discrete-panel`` that can be found on Grafana.com:
+
+.. image:: images/flux_grafana/Inverter_state_plugin.png
+
+Another option is to use the new "State timeline" panel type that is new in Grafana 8:
+
+.. image:: images/flux_grafana/Inverter_state_native.png
+
+Both of these have their strengths and weaknesses, and some experimentation may be required to get the most out of
+them.
