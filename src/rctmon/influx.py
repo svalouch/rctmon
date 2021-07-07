@@ -34,6 +34,7 @@ class InfluxDB:
         self._config = config
         self._buffer = list()
         self._log = logging.getLogger(__name__)
+        self._client = None
 
         if config.enable:
             self._log.info('Enabled, creating client')
@@ -72,10 +73,13 @@ class InfluxDB:
                     self.add_points(item)
 
     def flush(self) -> None:
-        self._log.debug('Flushing %d entries', len(self._buffer))
-        if self._client and len(self._buffer) > 0:
-            with self._client.write_api() as writer:
-                self._points_written += len(self._buffer)
-                writer.write(bucket=self._config.bucket, org=self._config.org, record=self._buffer,
-                             write_precision=self._write_precision)
-                self._buffer.clear()
+        if self._client:
+            if len(self._buffer) > 0:
+                self._log.debug('Flushing %d entries', len(self._buffer))
+                with self._client.write_api() as writer:
+                    self._points_written += len(self._buffer)
+                    writer.write(bucket=self._config.bucket, org=self._config.org, record=self._buffer,
+                                 write_precision=self._write_precision)
+                    self._buffer.clear()
+            else:
+                self._log.debug('No entries to flush')
