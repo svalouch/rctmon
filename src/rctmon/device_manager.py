@@ -427,7 +427,7 @@ class DeviceManager:
                 self.readings.solar_generator_a.mpp_search_step = ensure_type(value, float)
             elif oid == 0xB0041187:
                 self.readings.solar_generator_b.voltage = ensure_type(value, float)
-            elif oid == 0xB0041187:
+            elif oid == 0xCB5D21B:
                 self.readings.solar_generator_b.power = ensure_type(value, float)
             elif oid == 0x675776B1:
                 self.readings.solar_generator_b.mpp_target_voltage = ensure_type(value, float)
