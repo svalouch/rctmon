@@ -6,7 +6,7 @@ Prometheus exposition
 `Prometheus <https://prometheus.io/>`_ is an event monitoring and alerting system, based on a time series database. It
 is commonly used to monitor IT-systems such as servers and the applications they run. If enabled through ``prometheus →
 enable`` in the configuration, RctMon exposes its internal state, ready to be scraped by one or more Prometheus
-servers.
+servers. For a nice graphical representation of the collected data, `Grafana <https://grafana.com/>`_ is recommended.
 
 Configuration
 *************
