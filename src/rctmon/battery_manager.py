@@ -84,7 +84,7 @@ class BatteryManager:
             battery_soc = GaugeMetricFamily('rctmon_battery_state_of_charge',
                                                    'Battery state of charge',
                                                    labels=['inverter'], unit='percent')
-            battery_soc.add_metric([self.parent.name], self.readings.soc_target)
+            battery_soc.add_metric([self.parent.name], self.readings.soc)
             yield battery_soc
         if self.readings.soh is not None:
             battery_soh = GaugeMetricFamily('rctmon_battery_state_of_health', 'Battery state of health',
