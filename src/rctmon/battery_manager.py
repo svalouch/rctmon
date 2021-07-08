@@ -80,6 +80,12 @@ class BatteryManager:
                                                    labels=['inverter'], unit='percent')
             battery_soc_target.add_metric([self.parent.name], self.readings.soc_target)
             yield battery_soc_target
+        if self.readings.soc is not None:
+            battery_soc = GaugeMetricFamily('rctmon_battery_state_of_charge',
+                                                   'Battery state of charge',
+                                                   labels=['inverter'], unit='percent')
+            battery_soc.add_metric([self.parent.name], self.readings.soc_target)
+            yield battery_soc
         if self.readings.soh is not None:
             battery_soh = GaugeMetricFamily('rctmon_battery_state_of_health', 'Battery state of health',
                                             labels=['inverter'], unit='percent')
@@ -141,6 +147,8 @@ class BatteryManager:
             overview_fields['soc_min'] = self.readings.soc_min
         if self.readings.soc_target is not None:
             overview_fields['soc_target'] = self.readings.soc_target
+        if self.readings.soc is not None:
+            overview_fields['soc'] = self.readings.soc
         if self.readings.soh is not None:
             overview_fields['soh'] = self.readings.soh
         if self.readings.temperature is not None:
