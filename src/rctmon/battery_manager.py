@@ -314,7 +314,7 @@ class BatteryManager:
             elif oid == 0xA7FA5C5D:
                 self.readings.battery_voltage = ensure_type(value, float)
             # power_mng.battery_power
-            elif oid == 0x1156DFD0:
+            elif oid == 0x400F015B:
                 self.readings.battery_power = ensure_type(value, float)
             # power_mng.state
             elif oid == 0xDC667958:
