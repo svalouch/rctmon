@@ -362,7 +362,7 @@ class DeviceManager:
                           'g_sync.u_ptp_rms[1]', 'g_sync.u_ptp_rms[2]', 'grid_pll[0].f'], interval=10,
                          inventory=False, handler=self._cb_grid)
 
-            self.add_ids(['db.temp1', 'db.temp2', 'db.core_temp'], interval=60, inventory=False)
+            self.add_ids(['db.temp1', 'db.temp2', 'db.core_temp', 'battery.temperature'], interval=60, inventory=False, handler=self._cb_sensors)
             self.add_ids(['prim_sm.state'], interval=10, inventory=False, handler=self._cb_inverter)
             self.add_ids(['energy.e_ac_day', 'energy.e_ac_month', 'energy.e_ac_year', 'energy.e_ac_total'],
                          interval=300, inventory=False, handler=self._cb_inverter)
@@ -433,6 +433,22 @@ class DeviceManager:
                 self.readings.solar_generator_b.mpp_target_voltage = ensure_type(value, float)
             elif oid == 0x4AE96C12:
                 self.readings.solar_generator_b.mpp_search_step = ensure_type(value, float)
+        except TypeError:
+            log.warning('Got wrong type %s for %s', type(value), R.get_by_id(oid).name)
+
+    def _cb_sensors(self, oid: int, value: Union[float, bool]) -> None:
+        '''
+        Callback for storing sensors information.
+        '''
+        try:
+            if oid == 0xF79D41D9:
+                self.readings.temperature_heatsink = ensure_type(value, float)
+            elif oid == 0x4F735D10:
+                self.readings.temperature_heatsink_batt = ensure_type(value, float)
+            elif oid == 0xC24E85D0:
+                self.readings.temperature_core = ensure_type(value, float)
+            elif oid == 0x902AFAFB:
+                self.readings.temperature_battery = ensure_type(value, float)
         except TypeError:
             log.warning('Got wrong type %s for %s', type(value), R.get_by_id(oid).name)
 
