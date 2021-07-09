@@ -342,13 +342,13 @@ class Readings:
             yield gen_mpp_search_stp
 
         temp = GaugeMetricFamily('rctmon_temperature', 'Temperature values in °C', labels=['inverter', 'sensor'])
-        if self.temperature_heatsink is not None:  # db.temp
+        if self.temperature_heatsink is not None:  # db.temp1
             temp.add_metric([name, 'heatsink'], self.temperature_heatsink)
         if self.temperature_heatsink_batt is not None:  # db.temp2
             temp.add_metric([name, 'heatsink_battery_actuator'], self.temperature_heatsink_batt)
         if self.temperature_core is not None:  # db.core_temp
             temp.add_metric([name, 'core'], self.temperature_core)
-        if self.temperature_battery is not None:
+        if self.temperature_battery is not None: # battery.temperature
             temp.add_metric([name, 'battery'], self.temperature_battery)
         yield temp
 
