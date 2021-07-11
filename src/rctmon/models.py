@@ -348,8 +348,6 @@ class Readings:
             temp.add_metric([name, 'heatsink_battery_actuator'], self.temperature_heatsink_batt)
         if self.temperature_core is not None:  # db.core_temp
             temp.add_metric([name, 'core'], self.temperature_core)
-        if self.temperature_battery is not None: # battery.temperature
-            temp.add_metric([name, 'battery'], self.temperature_battery)
         yield temp
 
         if self.inverter_status is not None:
