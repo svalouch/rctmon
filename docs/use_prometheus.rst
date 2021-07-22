@@ -107,6 +107,9 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 |                                                   | as ``generator_a`` and ``generator_b`` for the solar strings or |
 |                                                   | ``power_switch`` for the Power Switch component.                |
 +---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_inverter_grid_separated``                | Shows info about island mode status.                            |
+|                                                   | If value is ``1`` inverter is in island mode.                   |
++---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_inverter_info``                          | Shows static info such as the ``control_software_version``, the |
 |                                                   | ``serial_number`` and ``parameter_file``.                       |
 +---------------------------------------------------+-----------------------------------------------------------------+
