@@ -363,7 +363,7 @@ class DeviceManager:
                          inventory=False, handler=self._cb_grid)
 
             self.add_ids(['db.temp1', 'db.temp2', 'db.core_temp'], interval=60, inventory=False, handler=self._cb_sensors)
-            self.add_ids(['prim_sm.state'], interval=10, inventory=False, handler=self._cb_inverter)
+            self.add_ids(['prim_sm.state', 'prim_sm.island_flag'], interval=10, inventory=False, handler=self._cb_inverter)
             self.add_ids(['energy.e_ac_day', 'energy.e_ac_month', 'energy.e_ac_year', 'energy.e_ac_total'],
                          interval=300, inventory=False, handler=self._cb_inverter)
 
@@ -371,6 +371,8 @@ class DeviceManager:
         try:
             if oid == 0x5F33284E:
                 self.readings.inverter_status = ensure_type(value, int)
+            elif oid == 0x3623D82A:
+                self.readings.inverter_grid_separated = ensure_type(value, int)
             else:
                 log.warning('_cb_inverter: unhandled oid 0x%X', oid)
         except TypeError:
