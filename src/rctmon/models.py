@@ -355,6 +355,11 @@ class Readings:
             ivs.add_metric([name], self.inverter_status)
             yield ivs
 
+        if self.inverter_grid_separated is not None:
+            igs = GaugeMetricFamily('rctmon_inverter_grid_separated', 'Status of the island mode', labels=['inverter', 'grid'])
+            igs.add_metric([name], self.inverter_grid_separated)
+            yield igs
+        
         yield from self.household.collect(name)
         yield from self.grid.collect(name)
 
