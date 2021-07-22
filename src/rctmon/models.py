@@ -289,6 +289,8 @@ class Readings:
 
     #: prim_sm.state
     inverter_status: Optional[int] = None
+    #: prim_sm.island_flag
+    inverter_grid_separated: Optional[int] = None
 
     household = HouseholdReadings()
     grid = GridReadings()
