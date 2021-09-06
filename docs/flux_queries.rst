@@ -180,7 +180,7 @@ The status is encoded as an integer value that must be mapped to something more 
    from(bucket: "rct-inverter")
        |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
        |> filter(fn: (r) => r._measurement == "raw_data" and r._field == "value_int" and r.inverter == "PS 6.0 ASDF" and r.name == "prim_sm.state")
-       |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)
+       |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)
        |> yield(name: "Inverter Status")
 
 The mapping is as follows:
