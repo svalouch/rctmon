@@ -363,16 +363,31 @@ class DeviceManager:
                          inventory=False, handler=self._cb_grid)
 
             self.add_ids(['db.temp1', 'db.temp2', 'db.core_temp'], interval=60, inventory=False, handler=self._cb_sensors)
-            self.add_ids(['prim_sm.state', 'prim_sm.island_flag'], interval=10, inventory=False, handler=self._cb_inverter)
+            self.add_ids(['prim_sm.state', 'prim_sm.island_flag', 'fault[0].flt', 'fault[1].flt', 'fault[2].flt',
+                          'fault[3].flt'], interval=10, inventory=False, handler=self._cb_inverter)
             self.add_ids(['energy.e_ac_day', 'energy.e_ac_month', 'energy.e_ac_year', 'energy.e_ac_total'],
                          interval=300, inventory=False, handler=self._cb_inverter)
 
     def _cb_inverter(self, oid: int, value: Any) -> None:
         try:
+            # prim_sm.state
             if oid == 0x5F33284E:
                 self.readings.inverter_status = ensure_type(value, int)
+            # prim_sm.island_flag
             elif oid == 0x3623D82A:
                 self.readings.inverter_grid_separated = ensure_type(value, int)
+            # fault[0].flt
+            elif oid == 0x37F9D5CA:
+                self.readings.fault0 = ensure_type(value, int)
+            # fault[1].flt
+            elif oid == 0x234B4736:
+                self.readings.fault1 = ensure_type(value, int)
+            # fault[2].flt
+            elif oid == 0x3B7FCD47:
+                self.readings.fault2 = ensure_type(value, int)
+            # fault[3].flt
+            elif oid == 0x7F813D73:
+                self.readings.fault3 = ensure_type(value, int)
             else:
                 log.warning('_cb_inverter: unhandled oid 0x%X', oid)
         except TypeError:

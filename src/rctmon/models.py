@@ -291,6 +291,14 @@ class Readings:
     inverter_status: Optional[int] = None
     #: prim_sm.island_flag
     inverter_grid_separated: Optional[int] = None
+    #: fault[0].flt
+    fault0: Optional[int] = None
+    #: fault[1].flt
+    fault1: Optional[int] = None
+    #: fault[2].flt
+    fault2: Optional[int] = None
+    #: fault[3].flt
+    fault3: Optional[int] = None
 
     household = HouseholdReadings()
     grid = GridReadings()
@@ -361,7 +369,18 @@ class Readings:
             igs = GaugeMetricFamily('rctmon_inverter_grid_separated', 'Status of the island mode', labels=['inverter'])
             igs.add_metric([name], self.inverter_grid_separated)
             yield igs
-        
+
+        faults = GaugeMetricFamily('rctmon_inverter_faults', 'Fault registers', labels=['inverter', 'register'])
+        if self.fault0 is not None:
+            faults.add_metric([name, '0'], self.fault0)
+        if self.fault1 is not None:
+            faults.add_metric([name, '1'], self.fault1)
+        if self.fault2 is not None:
+            faults.add_metric([name, '2'], self.fault2)
+        if self.fault3 is not None:
+            faults.add_metric([name, '3'], self.fault3)
+        yield faults
+
         yield from self.household.collect(name)
         yield from self.grid.collect(name)
 
