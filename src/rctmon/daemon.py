@@ -159,6 +159,8 @@ class Daemon:
         else:
             socklog.debug('Connection established')
             self._connected = True
+            # reset timer for connection 
+            self._ts.last_data_received = datetime.utcnow() 
 
     def _socket_disconnect(self) -> None:
 
