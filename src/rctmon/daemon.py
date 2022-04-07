@@ -187,6 +187,9 @@ class Daemon:
         except TimeoutError:
             socklog.warning('Socket receive: Connection timed out')
             self._socket_disconnect()
+        except ConnectionError:
+            socklog.warning('Socket receive: Connection error')
+            self._socket_disconnect()
         else:
             recv_len = len(recv_data)
             socklog.debug('Got %d from socket', recv_len)
