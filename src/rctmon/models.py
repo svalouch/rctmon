@@ -261,6 +261,49 @@ class GridReadings:
             frequency.add_metric([name], self.frequency)
         yield frequency
 
+@dataclass
+class EnergyReadings:
+    '''
+    Container for energy readings from the device.
+    '''
+    ac_sum: Optional[float] = None
+    household_sum: Optional[float] = None
+    grid_load_sum: Optional[float] = None
+    grid_feed_sum: Optional[float] = None
+    solar_generator_a_sum: Optional[float] = None
+    solar_generator_b_sum: Optional[float] = None
+
+    def collect(self, name: str) -> Generator:
+        if self.ac_sum is not None:
+            inverter = GaugeMetricFamily(
+                'rctmon_energy_ac_sum', 'Total inverter energy in Wh', labels=['inverter'])
+            inverter.add_metric([name], self.ac_sum)
+            yield inverter
+        if self.household_sum is not None:
+            household = GaugeMetricFamily('rctmon_energy_household_sum', 'Total household energy in Wh',
+                                          labels=['inverter'])
+            household.add_metric([name], self.household_sum)
+            yield household
+        if self.grid_load_sum is not None:
+            grid_load = GaugeMetricFamily('rctmon_energy_grid_load_sum', 'Total grid load energy in Wh',
+                                          labels=['inverter'])
+            grid_load.add_metric([name], self.grid_load_sum)
+            yield grid_load
+        if self.grid_feed_sum is not None:
+            grid_feed = GaugeMetricFamily('rctmon_energy_grid_feed_sum', 'Total grid feed energy in Wh',
+                                          labels=['inverter'])
+            grid_feed.add_metric([name], self.grid_feed_sum)
+            yield grid_feed
+        if self.solar_generator_a_sum is not None or self.solar_generator_b_sum is not None:
+            solar_generator = GaugeMetricFamily('rctmon_energy_solar_generator_sum',
+                                                'Total solar generator energy in Wh',
+                                                labels=['inverter', 'component'])
+            if self.solar_generator_a_sum is not None:
+                solar_generator.add_metric([name, 'generator_a'], self.solar_generator_a_sum)
+            if self.solar_generator_b_sum is not None:
+                solar_generator.add_metric([name, 'generator_b'], self.solar_generator_b_sum)
+            yield solar_generator
+
 
 @dataclass
 class Readings:
@@ -291,6 +334,13 @@ class Readings:
     inverter_status: Optional[int] = None
     #: prim_sm.island_flag
     inverter_grid_separated: Optional[int] = None
+    #: iso_struct.Riso
+    inverter_insulation_total: Optional[float] = None
+    #: iso_struct.Rn
+    inverter_insulation_negative: Optional[float] = None
+    #: iso_struct.Rp
+    inverter_insulation_positive: Optional[float] = None
+
     #: fault[0].flt
     fault0: Optional[int] = None
     #: fault[1].flt
@@ -302,6 +352,7 @@ class Readings:
 
     household = HouseholdReadings()
     grid = GridReadings()
+    energy = EnergyReadings()
 
     # power switch / power sensor
     #: rb485.available
@@ -370,6 +421,15 @@ class Readings:
             igs.add_metric([name], self.inverter_grid_separated)
             yield igs
 
+        ivi = GaugeMetricFamily('rctmon_inverter_insulation', 'Insulation in Ohm', labels=['inverter', 'unit'])
+        if self.inverter_insulation_total is not None:
+            ivi.add_metric([name, 'total'], self.inverter_insulation_total)
+        if self.inverter_insulation_positive is not None:
+            ivi.add_metric([name, 'positive'], self.inverter_insulation_positive)
+        if self.inverter_insulation_negative is not None:
+            ivi.add_metric([name, 'negative'], self.inverter_insulation_negative)
+        yield ivi
+
         faults = GaugeMetricFamily('rctmon_inverter_faults', 'Fault registers', labels=['inverter', 'register'])
         if self.fault0 is not None:
             faults.add_metric([name, '0'], self.fault0)
@@ -383,6 +443,7 @@ class Readings:
 
         yield from self.household.collect(name)
         yield from self.grid.collect(name)
+        yield from self.energy.collect(name)
 
         if self.power_switch_available:
             yield from self.power_switch_readings.collect(name)
