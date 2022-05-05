@@ -368,10 +368,9 @@ class DeviceManager:
             self.add_ids(['prim_sm.state', 'prim_sm.island_flag', 'fault[0].flt', 'fault[1].flt', 'fault[2].flt',
                           'fault[3].flt', 'iso_struct.Riso', 'iso_struct.Rp', 'iso_struct.Rn'],
                           interval=10, inventory=False, handler=self._cb_inverter)
-            self.add_ids(['energy.e_ac_day', 'energy.e_ac_month', 'energy.e_ac_year', 'energy.e_ac_total'],
-                         interval=300, inventory=False, handler=self._cb_inverter)
-            self.add_ids(['energy.e_grid_feed_total', 'energy.e_grid_load_total', 'energy.e_ac_total',
-                          'energy.e_load_total'], interval=300, inventory=False, handler=self._cb_energy)
+            self.add_ids(['energy.e_ac_day', 'energy.e_ac_month', 'energy.e_ac_year', 'energy.e_ac_total',
+                          'energy.e_grid_feed_total', 'energy.e_grid_load_total','energy.e_load_total'],
+                         interval=300, inventory=False, handler=self._cb_energy)
 
     def _cb_inverter(self, oid: int, value: Any) -> None:
         try:
@@ -526,6 +525,8 @@ class DeviceManager:
             # energy.e_dc_total[1]
             elif oid == 0x68EEFD3D:
                 self.readings.energy.solar_generator_b_sum = ensure_type(value, float)
+            else:
+                log.warning('_cb_energy: unhandled oid 0x%X', oid)
         except TypeError:
             log.warning('Got wrong type %s for %s', type(value), R.get_by_id(oid).name)
 
