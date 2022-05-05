@@ -393,10 +393,13 @@ class DeviceManager:
             # fault[3].flt
             elif oid == 0x7F813D73:
                 self.readings.fault3 = ensure_type(value, int)
+            # iso_struct.Riso
             elif oid == 0xC717D1FB:
                 self.readings.inverter_insulation_total = ensure_type(value, float)
+            # iso_struct.Rp
             elif oid == 0x8E41FC47:
                 self.readings.inverter_insulation_positive = ensure_type(value, float)
+            # iso_struct.Rn
             elif oid == 0x474F80D5:
                 self.readings.inverter_insulation_negative = ensure_type(value, float)
             else:
@@ -406,12 +409,16 @@ class DeviceManager:
 
     def _cb_household(self, oid: int, value: Any) -> None:
         try:
+            # g_sync.p_ac_load_sum_lp
             if oid == 0x1AC87AA0:
                 self.readings.household.load_total = ensure_type(value, float)
+            # g_sync.p_ac_load[0]
             elif oid == 0x3A39CA2:
                 self.readings.household.load_l1 = ensure_type(value, float)
+            # g_sync.p_ac_load[1]
             elif oid == 0x2788928C:
                 self.readings.household.load_l2 = ensure_type(value, float)
+            # g_sync.p_ac_load[2]
             elif oid == 0xF0B436DD:
                 self.readings.household.load_l3 = ensure_type(value, float)
             else:
@@ -421,18 +428,25 @@ class DeviceManager:
 
     def _cb_grid(self, oid: int, value: Any) -> None:
         try:
+            # g_sync.p_ac_grid_sum_lp
             if oid == 0x91617C58:
                 self.readings.grid.power_total = ensure_type(value, float)
+            # g_sync.p_ac_sc[0]
             elif oid == 0x27BE51D9:
                 self.readings.grid.power_l1 = ensure_type(value, float)
+            # g_sync.p_ac_sc[2]
             elif oid == 0xF5584F90:
                 self.readings.grid.power_l2 = ensure_type(value, float)
+            # g_sync.p_ac_sc[2]
             elif oid == 0xB221BCFA:
                 self.readings.grid.power_l3 = ensure_type(value, float)
+            # g_sync.u_l_rms[0]
             elif oid == 0xCF053085:
                 self.readings.grid.voltage_l1 = ensure_type(value, float)
+            # g_sync.u_l_rms[1]
             elif oid == 0x54B4684E:
                 self.readings.grid.voltage_l2 = ensure_type(value, float)
+            # g_sync.u_l_rms[2]
             elif oid == 0x2545E22D:
                 self.readings.grid.voltage_l3 = ensure_type(value, float)
             else:
@@ -445,20 +459,28 @@ class DeviceManager:
         Callback for storing solar generator information.
         '''
         try:
+            # g_sync.u_sg_avg[0]
             if oid == 0xB55BA2CE:
                 self.readings.solar_generator_a.voltage = ensure_type(value, float)
+            # dc_conv.dc_conv_struct[0].p_dc_lp
             elif oid == 0xDB11855B:
                 self.readings.solar_generator_a.power = ensure_type(value, float)
+            # dc_conv.dc_conv_struct[0].u_target
             elif oid == 0x226A23A4:
                 self.readings.solar_generator_a.mpp_target_voltage = ensure_type(value, float)
+            # dc_conv.dc_conv_struct[0].mpp.mpp_step
             elif oid == 0xBA8B8515:
                 self.readings.solar_generator_a.mpp_search_step = ensure_type(value, float)
+            # g_sync.u_sg_avg[1]
             elif oid == 0xB0041187:
                 self.readings.solar_generator_b.voltage = ensure_type(value, float)
+            # dc_conv.dc_conv_struct[1].p_dc_lp
             elif oid == 0xCB5D21B:
                 self.readings.solar_generator_b.power = ensure_type(value, float)
+            # dc_conv.dc_conv_struct[1].u_target
             elif oid == 0x675776B1:
                 self.readings.solar_generator_b.mpp_target_voltage = ensure_type(value, float)
+            # dc_conv.dc_conv_struct[1].mpp.mpp_step
             elif oid == 0x4AE96C12:
                 self.readings.solar_generator_b.mpp_search_step = ensure_type(value, float)
         except TypeError:
@@ -469,10 +491,13 @@ class DeviceManager:
         Callback for storing sensors information.
         '''
         try:
+            # db.temp1
             if oid == 0xF79D41D9:
                 self.readings.temperature_heatsink = ensure_type(value, float)
+            # db.temp2
             elif oid == 0x4F735D10:
                 self.readings.temperature_heatsink_batt = ensure_type(value, float)
+            # db.core_temp
             elif oid == 0xC24E85D0:
                 self.readings.temperature_core = ensure_type(value, float)
         except TypeError:
@@ -483,16 +508,22 @@ class DeviceManager:
         Callback for storing energy information.
         '''
         try:
+            # energy.e_ac_total
             if oid == 0xB1EF67CE:
                 self.readings.energy.ac_sum = ensure_type(value, float)
+            # energy.e_load_total
             elif oid == 0xEFF4B537:
                 self.readings.energy.household_sum = ensure_type(value, float)
+            # energy.e_grid_feed_total
             elif oid == 0x44D4C533:
                 self.readings.energy.grid_feed_sum = ensure_type(value, float)
+            # energy.e_grid_load_total
             elif oid == 0x62FBE7DC:
                 self.readings.energy.grid_load_sum = ensure_type(value, float)
+            # energy.e_dc_total[0]
             elif oid == 0xFC724A9E:
                 self.readings.energy.solar_generator_a_sum = ensure_type(value, float)
+            # energy.e_dc_total[1]
             elif oid == 0x68EEFD3D:
                 self.readings.energy.solar_generator_b_sum = ensure_type(value, float)
         except TypeError:
