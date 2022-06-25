@@ -113,6 +113,8 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 | ``rctmon_inverter_info``                          | Shows static info such as the ``control_software_version``, the |
 |                                                   | ``serial_number`` and ``parameter_file``.                       |
 +---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_inverter_status``                        | Shows inverter status code.                                     |
++---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_generator_voltage_volt``                 | Voltage, label ``generator`` is ``a`` or ``b``.                 |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_generator_power_watt``                   | Watt, label ``generator`` (``a``, ``b``).                       |
@@ -121,6 +123,9 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_generator_mpp_search_step_volt``         | MPP search step, label ``generator`` (``a``, ``b``).            |
 +---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_inverter_insulation``                    | Insulation in ohm of strings, ``total``, ``positive``,          |
+|                                                   | ``negative``                                                    |
++---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_temperature``                            | Component temperature for builtin components                    |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_household_load``                         | Household load over all phases                                  |
@@ -128,6 +133,10 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 | ``rctmon_household_load_phase``                   | Single-phase load, label ``phase`` is ``l1`` to ``l3``.         |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_grid_power_watt``                        | Grid power, label ``phase`` is ``l1`` to ``l3``.                |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_grid_power_reactive_var``                | Grid reactive power, label ``phase`` is ``l1`` to ``l3``.       |
+|                                                   | Useful information in Island mode, as the reactive              |
+|                                                   | power must be driven by the inverter fully.                     |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_grid_voltage_volt``                      | Grid voltage, label ``phase`` is ``l1`` to ``l3``.              |
 +---------------------------------------------------+-----------------------------------------------------------------+
@@ -141,6 +150,16 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 | ``rctmon_grid_frequency_hertz``                   | Grid frequency, ``phase`` is ``l1`` to ``l3``.                  |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_powerstorage_frequency_hertz``           | Inverter frequency if active, ``phase`` is ``l1`` to ``l3``.    |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_energy_ac_sum``                          | Total inverter energy in Wh                                     |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_energy_household_sum``                   | Total household energy in Wh                                    |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_energy_grid_load_sum``                   | Total grid load energy in Wh                                    |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_energy_grid_feed_sum``                   | Total grid feed energy in Wh                                    |
++---------------------------------------------------+-----------------------------------------------------------------+
+| ``rctmon_energy_solar_generator_sum``             | Total solar generator energy in Wh                              |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_bms_info``                               | Information about the BMS if detected, ``serial_number``        |
 +---------------------------------------------------+-----------------------------------------------------------------+
@@ -168,6 +187,6 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_battery_stored_energy_total``            | Total amount of charged energy                                  |
 +---------------------------------------------------+-----------------------------------------------------------------+
-| ``rctmon_battery_state_of_charge_min_percent``    |                                                                 |
+| ``rctmon_battery_state_of_charge_min_percent``    | Battery minimum SOC                                             |
 +---------------------------------------------------+-----------------------------------------------------------------+
 
