@@ -135,6 +135,8 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 | ``rctmon_grid_power_watt``                        | Grid power, label ``phase`` is ``l1`` to ``l3``.                |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_grid_power_reactive_var``                | Grid reactive power, label ``phase`` is ``l1`` to ``l3``.       |
+|                                                   | Useful information in Island mode, as the reactive              |
+|                                                   | power must be driven by the inverter fully.                     |
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_grid_voltage_volt``                      | Grid voltage, label ``phase`` is ``l1`` to ``l3``.              |
 +---------------------------------------------------+-----------------------------------------------------------------+
@@ -185,6 +187,6 @@ Percentages are generally in the range ``0.0`` to ``1.0``.
 +---------------------------------------------------+-----------------------------------------------------------------+
 | ``rctmon_battery_stored_energy_total``            | Total amount of charged energy                                  |
 +---------------------------------------------------+-----------------------------------------------------------------+
-| ``rctmon_battery_state_of_charge_min_percent``    |                                                                 |
+| ``rctmon_battery_state_of_charge_min_percent``    | Battery minimum SOC                                             |
 +---------------------------------------------------+-----------------------------------------------------------------+
 
