@@ -137,7 +137,7 @@ class PowerSwitchReadings:
                                    {'inverter': name, 'software_version': str(self.software_version),
                                     'bootloader_version': str(self.bootloader_version)})
 
-        grid_voltage = GaugeMetricFamily('rctmon_grid_voltage', 'Grid voltage by phase', labels=['inverter', 'phase'],
+        grid_voltage = GaugeMetricFamily('rctmon_powerswitch_voltage', 'Grid voltage at powerswitch by phase', labels=['inverter', 'phase'],
                                          unit='volt')
         if self.grid_voltage_l1 is not None:
             grid_voltage.add_metric([name, 'l1'], self.grid_voltage_l1)
@@ -147,7 +147,7 @@ class PowerSwitchReadings:
             grid_voltage.add_metric([name, 'l3'], self.grid_voltage_l3)
         yield grid_voltage
 
-        grid_frequency = GaugeMetricFamily('rctmon_grid_frequency', 'Grid frequency by phase',
+        grid_frequency = GaugeMetricFamily('rctmon_powerswitch_frequency', 'Grid frequency at powerswitch by phase',
                                            labels=['inverter', 'phase'], unit='hertz')
         if self.grid_frequency_l1 is not None:
             grid_frequency.add_metric([name, 'l1'], self.grid_frequency_l1)
