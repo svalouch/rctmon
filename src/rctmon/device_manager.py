@@ -448,6 +448,18 @@ class DeviceManager:
             # g_sync.u_l_rms[2]
             elif oid == 0x2545E22D:
                 self.readings.grid.voltage_l3 = ensure_type(value, float)
+            # g_sync.u_ptp_rms[0]
+            elif oid == 0x63476DBE:
+                self.readings.grid.phase_to_phase_voltage_1 = ensure_type(value, float)
+            # g_sync.u_ptp_rms[1]
+            elif oid == 0x485AD749:
+                self.readings.grid.phase_to_phase_voltage_2 = ensure_type(value, float)
+            # g_sync.u_ptp_rms[2]
+            elif oid == 0xF25C339B:
+                self.readings.grid.phase_to_phase_voltage_3 = ensure_type(value, float)
+            # grid_pll[0].f
+            elif oid == 0x1C4A665F:
+                self.readings.grid.frequency = ensure_type(value, float)
             else:
                 log.warning('_cb_grid: unhandled oid 0x%X', oid)
         except TypeError:
