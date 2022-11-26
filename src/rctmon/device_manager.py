@@ -64,7 +64,9 @@ class DeviceManager:
         self.battery_manager = BatteryManager(parent=self)
 
         P_R.register(self)
+        log.info("Registered device manager to prometheus registry")
         P_R.register(self.battery_manager)
+        log.info("Registered battery manager to prometheus registry")
 
     def add_callback(self, oid: int, handler: OidHandler) -> None:
         '''
@@ -106,7 +108,6 @@ class DeviceManager:
         yield inventory
 
         yield from self.readings.collect(self.name)
-        yield from self.battery_manager.collect()
 
     def collect_influx(self, influx: InfluxDB) -> None:
         '''
