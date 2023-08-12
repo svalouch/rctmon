@@ -156,6 +156,13 @@ the ``bucket`` field. The ``org`` is only required for version 2.x and ignored i
    As of version ``0.0.1``, the application will hang if the InfluxDB cannot be reached. This will be addresses in
    later releases.
 
+Section "mqtt"
+==============
+MQTT is a lightweight publish/subscribe machine-to-machine messaging protocol. All functional metrics exposed for
+prometheus can be published into respective mqtt topics, when MQTT support is enabled by setting ``enable`` to *true*
+and the MQTT server is configured as ``mqtt_host`` and optionally ``mqtt_port`` to use a non-default port.
+There is no support yet for AuthN/AuthZ.
+
 Section "logging"
 =================
 This section can be omitted entirely, it just shows the internal defaults which log to ``stdout`` by default, suitable

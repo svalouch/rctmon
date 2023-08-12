@@ -34,6 +34,14 @@ influxdb:
   # Bucket name, InfluxDB 1.8 uses this as database name
   bucket: rct-inverter
 
+mqtt:
+  # Enables writing to MQTT
+  enable: false
+  # Hostname of the MQTT broker to write to
+  mqtt_host: localhost
+  # The interval in which to update MQTT
+  flush_interval_seconds: 30
+
 # Configuration for the logging behaviour of the application. It can be left
 # out entirely for most use-cases, the following shows the internal defaults
 # will be used then. If set, it is handed to "logging.config.dictConfig".
