@@ -115,6 +115,11 @@ class BatteryManager:
                                                         'energy', labels=['inverter'])
             battery_stored_energy.add_metric([self.parent.name], self.readings.stored_energy)
             yield battery_stored_energy
+        if self.readings.used_energy is not None:
+            battery_used_energy = CounterMetricFamily('rctmon_battery_used_energy', 'Battery cumulative used '
+                                                        'energy', labels=['inverter'])
+            battery_used_energy.add_metric([self.parent.name], self.readings.used_energy)
+            yield battery_used_energy
 
         if self.num_batteries and self.num_batteries > 0:
             cycles = CounterMetricFamily('rctmon_battery_module_cycles', 'Number of cycles the battery has accumulated'
