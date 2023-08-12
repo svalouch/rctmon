@@ -53,6 +53,17 @@ class PrometheusConfig(BaseModel):
     bind_port: int = 9831
 
 
+class MqttConfig(BaseModel):
+    '''
+    Mqtt Configuration.
+    '''
+    enable: bool = False
+    mqtt_host: str = None
+    mqtt_port: int = 1883
+    client_name: str = 'rctmon'
+    flush_interval_seconds: int = 30
+
+
 class RctMonConfig(BaseModel):
     '''
     Main settings container.
@@ -60,3 +71,4 @@ class RctMonConfig(BaseModel):
     device: DeviceConfig
     prometheus: PrometheusConfig
     influxdb: InfluxDBConfig
+    mqtt: MqttConfig
