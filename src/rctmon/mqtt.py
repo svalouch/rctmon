@@ -10,20 +10,23 @@ import logging
 
 class MqttClient():
 
-    mqtt_host = None
-    mqtt_port = None
-
-    mqtt_client = None
-
     def __init__(self, mqtt_config: MqttConfig):
-        self.mqtt_host = mqtt_config.mqtt_host
-        self.mqtt_port = mqtt_config.mqtt_port
+        self.conf = mqtt_config
+        self.mqtt_client = self._connect()
 
-        self._connect()
-
-    def _connect(self):
-        self.mqtt_client = mqtt.Client()
-        self.mqtt_client.connect(self.mqtt_host, self.mqtt_port)
+    def _connect(self) -> 'MqttClient':
+        mqtt_client = mqtt.Client()
+        if self.conf.user and self.conf.auth_pass:
+            mqtt_client.username_pw_set(self.conf.auth_user, self.conf.auth_pass)
+        if self.conf.tls_enable:
+            mqtt_client.tls_set(
+                self.conf.tls_ca_cert,
+                self.conf.tls_certfile,
+                self.conf.tls_keyfile
+            )
+            mqtt_client.tls_insecure_set(self.conf.tls_insecure)
+        mqtt_client.connect(self.conf.mqtt_host, self.conf.mqtt_port)
+        return mqtt_client
 
     def flush(self):
         """Flush all metrics from the registry to the mqtt server."""
