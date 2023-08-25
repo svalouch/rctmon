@@ -61,10 +61,12 @@ class MqttConfig(BaseModel):
     look for `tls_set` and `tls_insecure_set`
     '''
     enable: bool = False
-    mqtt_host: str = None
+    mqtt_host: str
     mqtt_port: int = 1883
+    mqtt_retain: bool = True
     client_name: str = 'rctmon'
     flush_interval_seconds: int = 30
+    topic_prefix: str = "rctmon"
     auth_user: Union[str, None] = None
     auth_pass: Union[str, None] = None
     tls_enable: bool = False
