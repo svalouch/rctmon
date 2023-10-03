@@ -37,7 +37,7 @@ Start by creating a virtual environment at a location of your liking (adapt path
 .. code-block:: shell-session
 
    $ python3 -m venv ${HOME}/rctmon-venv
-   $ source ${HOME}/rctmon-venv//bin/activate
+   $ source ${HOME}/rctmon-venv/bin/activate
    (rctmon-venv) $
 
 Use ``pip`` to install the package. Depending on the URL you use, you can get different versions, here are some
