@@ -34,6 +34,31 @@ influxdb:
   # Bucket name, InfluxDB 1.8 uses this as database name
   bucket: rct-inverter
 
+mqtt:
+  # Enables writing to MQTT
+  enable: false
+  # Hostname of the MQTT broker to write to
+  mqtt_host: localhost
+  # The interval in which to update MQTT
+  flush_interval_seconds: 30
+  # over write topic prefix
+  # topic_prefix: rctmon/rct01/
+  # user and password to authenticat 
+  auth_user: test
+  auth_pass: "*********"
+  # enable TLS/SSL encryption, most likely `mqtt_port` need to be set
+  tls_enable: false
+  # the mqtt library is very strict in checking TLS certificates.
+  # if you use self-signed certificates, you need to export it and 
+  # give the path here.
+  tls_ca_cert: ./env/ca.pem
+  # Give path to client certificate and key here for authentication. 
+  # tls_certfile: ./env/cert.pem
+  # tls_keyfile: ./env/key.pem
+
+
+
+
 # Configuration for the logging behaviour of the application. It can be left
 # out entirely for most use-cases, the following shows the internal defaults
 # will be used then. If set, it is handed to "logging.config.dictConfig".
