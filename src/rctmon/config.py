@@ -8,7 +8,7 @@ Configuration management.
 
 # pylint: disable=too-few-public-methods  # configuration declarations don't contain methods
 
-from typing import Optional, Union
+from typing import Optional
 
 from pydantic import BaseModel, SecretStr
 
@@ -65,15 +65,14 @@ class MqttConfig(BaseModel):
     mqtt_port: int = 1883
     mqtt_retain: bool = True
     client_name: str = 'rctmon'
-    flush_interval_seconds: int = 30
     topic_prefix: str = "rctmon"
-    auth_user: Union[str, None] = None
-    auth_pass: Union[str, None] = None
+    auth_user: Optional[str] = None
+    auth_pass: Optional[str] = None
     tls_enable: bool = False
     tls_insecure: bool = False
-    tls_ca_cert: Union[str, None] = None
-    tls_certfile: Union[str, None] = None
-    tls_keyfile: Union[str, None] = None
+    tls_ca_cert: Optional[str] = None
+    tls_certfile: Optional[str] = None
+    tls_keyfile: Optional[str] = None
 
 class RctMonConfig(BaseModel):
     '''

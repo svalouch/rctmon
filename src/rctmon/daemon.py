@@ -28,6 +28,7 @@ from .influx import InfluxDB
 from .monitoring import MON_FRAMES_SENT, MON_FRAMES_RECEIVED, MON_DECODE_ERROR, MON_INFO
 from .monitoring import MON_BYTES_SENT, MON_BYTES_RECEIVED, MON_DEVICE_UP, setup_monitoring
 from .mqtt import MqttClient
+from .event_processor import EventBroadcaster
 
 try:
     import systemd.daemon  # type:ignore
@@ -56,8 +57,6 @@ class TSCollection:  # pylint: disable=too-few-public-methods
     last_data_received = datetime.utcnow()
     last_influx_collect = datetime.utcnow()
     last_influx_flush = datetime.utcnow()  # we don't want to flush immediately
-    last_mqtt_collect = datetime.utcnow()
-    last_mqtt_flush = datetime.utcnow()  # we don't want to flush immediately
 
 
 class Daemon:
@@ -119,8 +118,8 @@ class Daemon:
             setup_monitoring(self._settings.prometheus)
 
         if self._settings.mqtt.enable:
-            log.info('Mqtt endpoint is at %s', self._settings.mqtt.mqtt_host)
             self._mqtt = MqttClient(self._settings.mqtt)
+            EventBroadcaster.register_consumer(self._mqtt)
 
         if HAVE_SYSTEMD:
             log.info('Signaling readiness')
@@ -312,10 +311,6 @@ class Daemon:
             if self._ts.last_influx_flush < datetime.utcnow() - timedelta(seconds=5):
                 self._ts.last_influx_flush = datetime.utcnow()
                 self._influx.flush()
-
-            if self._ts.last_mqtt_flush < datetime.utcnow() - timedelta(seconds=self._settings.mqtt.flush_interval_seconds):
-                self._ts.last_mqtt_flush = datetime.utcnow()
-                self._mqtt.flush()
 
         log.info('End main loop, shutting down')
 

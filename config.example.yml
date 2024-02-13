@@ -39,20 +39,21 @@ mqtt:
   enable: false
   # Hostname of the MQTT broker to write to
   mqtt_host: localhost
-  # The interval in which to update MQTT
-  flush_interval_seconds: 30
-  # over write topic prefix
-  # topic_prefix: rctmon/rct01/
-  # user and password to authenticat 
+  # Port of the MQTT server to use
+  # mqtt_port: 1883
+  # Overwrite topic prefix
+  # topic_prefix: rctmon/rct01
+  # user and password to authenticate
   auth_user: test
   auth_pass: "*********"
-  # enable TLS/SSL encryption, most likely `mqtt_port` need to be set
+  # enable TLS/SSL encryption, most likely `mqtt_port` needs to be set, too
   tls_enable: false
+  #tls_insecure: false
   # the mqtt library is very strict in checking TLS certificates.
-  # if you use self-signed certificates, you need to export it and 
+  # if you use self-signed certificates, you need to export it and
   # give the path here.
   tls_ca_cert: ./env/ca.pem
-  # Give path to client certificate and key here for authentication. 
+  # Give path to client certificate and key here for authentication.
   # tls_certfile: ./env/cert.pem
   # tls_keyfile: ./env/key.pem
 

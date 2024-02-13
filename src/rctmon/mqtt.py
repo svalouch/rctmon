@@ -2,65 +2,64 @@
 MQTT integration
 '''
 
-from time import sleep
 import paho.mqtt.client as mqtt
 from .config import MqttConfig
-from prometheus_client.core import REGISTRY, Sample, Metric
+from .event_processor import EventConsumer, Event
 import logging
+from ssl import VerifyMode
 
+log = logging.getLogger(__name__)
 
-class MqttClient():
+class MqttClient(EventConsumer):
+
+    is_connected: bool
+    conf: MqttConfig
+    topic_prefix: list
+    mqtt_client: mqtt.Client
 
     def __init__(self, mqtt_config: MqttConfig):
         self.conf = mqtt_config
-        self.is_connected = False
         self.topic_prefix = [self.conf.topic_prefix.strip("/")]
-        self.mqtt_client = self._connect()
+        if self.conf.enable:
+            self.mqtt_client = self._connect()
 
-    def _connect(self) -> 'mqtt.Client':
-        mqtt_client = mqtt.Client(client_id=self.conf.client_name)
+    def _connect(self) -> mqtt.Client:
+        log.info('Mqtt endpoint is at %s', self.conf.mqtt_host)
+        mqtt_client = mqtt.Client(client_id=self.conf.client_name, callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
         mqtt_client.enable_logger()
-        self.on_connect = self.__cb_on_connect
 
         if self.conf.auth_user and self.conf.auth_pass:
             mqtt_client.username_pw_set(self.conf.auth_user, self.conf.auth_pass)
         if self.conf.tls_enable:
             mqtt_client.tls_set(
-                self.conf.tls_ca_cert,
-                self.conf.tls_certfile,
-                self.conf.tls_keyfile
+                ca_certs=self.conf.tls_ca_cert,
+                certfile=self.conf.tls_certfile,
+                keyfile=self.conf.tls_keyfile,
+                cert_reqs=VerifyMode.CERT_NONE if self.conf.tls_insecure else VerifyMode.CERT_REQUIRED
             )
             mqtt_client.tls_insecure_set(self.conf.tls_insecure)
-        mqtt_client.connect(self.conf.mqtt_host, self.conf.mqtt_port)
-        # while self.is_connected == False:
-        #     sleep(1)
+
+        log.info("Connecting to mqtt server")
+        mqtt_client.connect(host=self.conf.mqtt_host, port=self.conf.mqtt_port)
+        mqtt_client.loop_start()
+
         return mqtt_client
 
-    def __cb_on_connect(self, mqttc, obj, flags, rc):
-        self.is_connected =  True
+    def _publish(self, topic, payload: str):
+        log.debug("Publishing new value to " + topic)
+        if self.mqtt_client.is_connected():
+            self.mqtt_client.publish(topic=topic, payload=payload, retain=self.conf.mqtt_retain)
+        else:
+            log.warn("Not connected currently, skipping publish")
 
-    def flush(self):
-        """Flush all metrics from the registry to the mqtt server."""
-        ignored_labels = ('inverter')  # ignore the generic inverter label
+    def publish(self, topic: list, value):
+        if self.conf.enable:
+            topic = "/".join(self.topic_prefix + topic)
+            if isinstance(value, float):
+                value = "{:f}".format(value)
+            self._publish(topic=topic, payload=value)
+        else:
+            log.debug("mqtt not enabled")
 
-        metric: Metric = None
-        sample: Sample = None
-
-        for metric in REGISTRY.collect():
-            if not metric.name.startswith("rctmon"):
-                # ignore all additional non-functional metrics
-                continue
-
-
-            base_topic = "/".join(self.topic_prefix + (metric.name.split("_")[1:]))
-            for sample in metric.samples:
-                topic = base_topic
-                for label in sample.labels.keys():
-                    if label in ignored_labels:
-                        continue
-                    else:
-                        segment = "{}_{}".format(label, sample.labels[label])
-                        topic += "/" + segment
-
-                self.mqtt_client.publish(
-                    topic=topic, payload=sample.value, retain=self.conf.mqtt_retain)
+    def receive_event(self, event: Event):
+        self.publish(list(event.key), event.payload)
