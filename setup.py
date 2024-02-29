@@ -36,6 +36,7 @@ setup(
         'pyyaml',
         'rctclient==0.0.3',
         'requests>=2.21',
+        'paho-mqtt>=2.0',
     ],
     extras_require={
         'dev': [

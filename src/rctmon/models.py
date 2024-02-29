@@ -7,11 +7,14 @@ Models and dataclasses.
 '''
 
 # pylint: disable=too-many-instance-attributes
-
+import logging
 from dataclasses import dataclass
 from typing import Generator, Optional
 
 from prometheus_client.core import GaugeMetricFamily, InfoMetricFamily
+from .event_processor import EventBroadcaster, Event
+
+log = logging.getLogger(__name__)
 
 
 class BatteryInfo:
@@ -36,9 +39,27 @@ class BatteryInfo:
         '''
         return self.cycle_count is not None
 
+class AbstractReadings:
+
+    name = None
+
+    def __setattr__(self, name, value):
+        old = getattr(self, name)
+        if old != value:
+            log.debug("change for {} detected, old {}, new {}".
+                      format(name, old, value))
+            self.__dict__[name] = value
+
+            category = self.__class__.__name__.removesuffix("Readings").lower()
+            topic = list[str]()
+            topic.append(category if category else "basic")
+            if self.name:
+                topic.append(self.name)
+            topic.append(name)
+            EventBroadcaster.submit_event(Event(key=tuple(topic), payload=value))
 
 @dataclass
-class BatteryReadings:
+class BatteryReadings(AbstractReadings):
     '''
     Container for battery readings that are not specific to a stack member.
     '''
@@ -83,12 +104,12 @@ class BatteryReadings:
     #: battery.status2
     status2: Optional[int] = None
 
-
 @dataclass
-class SolarGeneratorReadings:
+class SolarGeneratorReadings(AbstractReadings):
     '''
     Container for readings from a single solar generator.
     '''
+    name: str = None
     # g_sync.u_sg_avg[0]
     voltage: Optional[float] = None
     # dc_conv.dc_conv_struct[0].p_dc_lp
@@ -98,9 +119,11 @@ class SolarGeneratorReadings:
     # dc_conv.dc_conv_struct[0].mpp.mpp_step
     mpp_search_step: Optional[float] = None
 
+    def __init__(self, name):
+        self.__dict__["name"] = name
 
 @dataclass
-class PowerSwitchReadings:
+class PowerSwitchReadings(AbstractReadings):
     '''
     Container for readings from the power switch / power sensor.
     '''
@@ -169,7 +192,7 @@ class PowerSwitchReadings:
 
 
 @dataclass
-class HouseholdReadings:
+class HouseholdReadings(AbstractReadings):
     #: g_sync.p_ac_load_sum_lp
     load_total: Optional[float] = None
     #: g_sync.p_ac_load[0]
@@ -198,7 +221,7 @@ class HouseholdReadings:
 
 
 @dataclass
-class GridReadings:
+class GridReadings(AbstractReadings):
     #: g_sync.p_ac_grid_sum_lp
     power_total: Optional[float] = None
     #: g_sync.p_ac_sc[0]
@@ -262,7 +285,7 @@ class GridReadings:
         yield frequency
 
 @dataclass
-class EnergyReadings:
+class EnergyReadings(AbstractReadings):
     '''
     Container for energy readings from the device.
     '''
@@ -306,7 +329,7 @@ class EnergyReadings:
 
 
 @dataclass
-class Readings:
+class Readings(AbstractReadings):
     '''
     Container for general readings from the device.
     '''
@@ -325,10 +348,10 @@ class Readings:
     # solar generators
     #: dc_conv.dc_conv_struct[0].enabled
     have_generator_a: Optional[bool] = None
-    solar_generator_a = SolarGeneratorReadings()
+    solar_generator_a = SolarGeneratorReadings("a")
     #: dc_conv.dc_conv_struct[1].enabled
     have_generator_b: Optional[bool] = None
-    solar_generator_b = SolarGeneratorReadings()
+    solar_generator_b = SolarGeneratorReadings("b")
 
     #: prim_sm.state
     inverter_status: Optional[int] = None

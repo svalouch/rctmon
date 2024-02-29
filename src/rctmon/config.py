@@ -53,6 +53,27 @@ class PrometheusConfig(BaseModel):
     bind_port: int = 9831
 
 
+class MqttConfig(BaseModel):
+    '''
+    Mqtt Configuration.
+    for details about the tls config see:
+    https://eclipse.dev/paho/index.php?page=clients/python/docs/index.php#option-functions
+    look for `tls_set` and `tls_insecure_set`
+    '''
+    enable: bool = False
+    mqtt_host: str
+    mqtt_port: int = 1883
+    mqtt_retain: bool = True
+    client_name: str = 'rctmon'
+    topic_prefix: str = "rctmon"
+    auth_user: Optional[str] = None
+    auth_pass: Optional[str] = None
+    tls_enable: bool = False
+    tls_insecure: bool = False
+    tls_ca_cert: Optional[str] = None
+    tls_certfile: Optional[str] = None
+    tls_keyfile: Optional[str] = None
+
 class RctMonConfig(BaseModel):
     '''
     Main settings container.
@@ -60,3 +81,4 @@ class RctMonConfig(BaseModel):
     device: DeviceConfig
     prometheus: PrometheusConfig
     influxdb: InfluxDBConfig
+    mqtt: MqttConfig
