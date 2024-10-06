@@ -362,7 +362,8 @@ class DeviceManager:
                           'g_sync.p_ac_load[2]'], interval=10, inventory=False, handler=self._cb_household)
             self.add_ids(['g_sync.p_ac_grid_sum_lp', 'g_sync.p_ac_sc[0]', 'g_sync.p_ac_sc[1]', 'g_sync.p_ac_sc[2]',
                           'g_sync.u_l_rms[0]', 'g_sync.u_l_rms[1]', 'g_sync.u_l_rms[2]', 'g_sync.u_ptp_rms[0]',
-                          'g_sync.u_ptp_rms[1]', 'g_sync.u_ptp_rms[2]', 'grid_pll[0].f'], interval=10,
+                          'g_sync.u_ptp_rms[1]', 'g_sync.u_ptp_rms[2]', 'grid_pll[0].f', 'g_sync.q_ac[0]',
+                          'g_sync.q_ac[1]', 'g_sync.q_ac[2]'], interval=10,
                          inventory=False, handler=self._cb_grid)
 
             self.add_ids(['db.temp1', 'db.temp2', 'db.core_temp'], interval=60, inventory=False, handler=self._cb_sensors)
@@ -440,6 +441,15 @@ class DeviceManager:
             # g_sync.p_ac_sc[2]
             elif oid == 0xB221BCFA:
                 self.readings.grid.power_l3 = ensure_type(value, float)
+            # g_sync.q_ac[0]
+            elif oid == 0xE94C2EFC:
+                self.readings.grid.power_reactive_l1 = ensure_type(value, float)
+            # g_sync.q_ac[1]
+            elif oid == 0x82E3C121:
+                self.readings.grid.power_reactive_l2 = ensure_type(value, float)
+            # g_sync.q_ac[2]
+            elif oid == 0xBCA77559:
+                self.readings.grid.power_reactive_l3 = ensure_type(value, float)
             # g_sync.u_l_rms[0]
             elif oid == 0xCF053085:
                 self.readings.grid.voltage_l1 = ensure_type(value, float)
