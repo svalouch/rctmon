@@ -230,6 +230,12 @@ class GridReadings(AbstractReadings):
     power_l2: Optional[float] = None
     #: g_sync.p_ac_sc[2]
     power_l3: Optional[float] = None
+    #: g_sync.q_ac[0]
+    power_reactive_l1: Optional[float] = None
+    #: g_sync.q_ac[1]
+    power_reactive_l2: Optional[float] = None
+    #: g_sync.q_ac[2]
+    power_reactive_l3: Optional[float] = None
     #: g_sync.u_l_rms[0]
     voltage_l1: Optional[float] = None
     #: g_sync.u_l_rms[1]
@@ -258,6 +264,16 @@ class GridReadings(AbstractReadings):
         if self.power_l3 is not None:
             power.add_metric([name, 'l3'], self.power_l3)
         yield power
+
+        power_reactive = GaugeMetricFamily('rctmon_grid_power_reactive', 'Power reactive to or from the grid by phase',
+                                           labels=['inverter', 'phase'], unit='var')
+        if self.power_reactive_l1 is not None:
+            power_reactive.add_metric([name, 'l1'], self.power_reactive_l1)
+        if self.power_reactive_l2 is not None:
+            power_reactive.add_metric([name, 'l2'], self.power_reactive_l2)
+        if self.power_reactive_l3 is not None:
+            power_reactive.add_metric([name, 'l3'], self.power_reactive_l3)
+        yield power_reactive
 
         voltage = GaugeMetricFamily('rctmon_grid_voltage', 'Grid voltage by phase', labels=['inverter', 'phase'],
                                     unit='volt')
