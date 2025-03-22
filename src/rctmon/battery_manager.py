@@ -100,6 +100,14 @@ class BatteryManager:
             battery_bat_status = GaugeMetricFamily('rctmon_battery_bat_status', 'Battery status', labels=['inverter'])
             battery_bat_status.add_metric([self.parent.name], self.readings.bat_status)
             yield battery_bat_status
+        if self.readings.status is not None:
+            battery_status = GaugeMetricFamily('rctmon_battery_status', 'Battery status', labels=['inverter'])
+            battery_status.add_metric([self.parent.name], self.readings.status)
+            yield battery_status
+        if self.readings.status2 is not None:
+            battery_status2 = GaugeMetricFamily('rctmon_battery_status2', 'Battery status 2', labels=['inverter'])
+            battery_status2.add_metric([self.parent.name], self.readings.status2)
+            yield battery_status2
         if self.readings.impedance_fine is not None:
             battery_impedance_fine = GaugeMetricFamily('rctmon_battery_impedance_fine', 'Battery impedance (fine)',
                                                        labels=['inverter'])
