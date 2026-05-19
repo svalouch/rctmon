@@ -34,7 +34,7 @@ setup(
         'prometheus_client>=0.9.0',
         'pydantic>=1.2',
         'pyyaml',
-        'rctclient==0.0.3',
+        'rctclient==0.0.6',
         'requests>=2.21',
         'paho-mqtt>=2.0',
     ],

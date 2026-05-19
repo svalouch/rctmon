@@ -13,6 +13,8 @@ from prometheus_client import Counter, Gauge, Info, MetricsHandler
 
 from .config import PrometheusConfig
 
+import logging
+
 
 MON_BYTES_RECEIVED = Counter('rctmon_bytes_received', 'Amount of bytes received since the start of the application')
 MON_BYTES_SENT = Counter('rctmon_bytes_sent', 'Amount of bytes sent since the start of the application')
@@ -26,6 +28,8 @@ MON_INFO = Info('rctmon', 'Information about the application')
 
 
 class MainHandler(MetricsHandler):
+    log = logging.getLogger(__name__)
+
     def do_GET(self):
         path = urlparse(self.path).path
         try:
@@ -37,6 +41,7 @@ class MainHandler(MetricsHandler):
             else:
                 self.send_error(404)
         except Exception:  # pylint: disable=broad-except
+            self.log.error('Error handling request', exc_info=True)
             self.send_error(500, 'Internal error')
 
     def send_html_main(self) -> None:

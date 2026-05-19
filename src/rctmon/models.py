@@ -12,9 +12,28 @@ from dataclasses import dataclass
 from typing import Generator, Optional
 
 from prometheus_client.core import GaugeMetricFamily, InfoMetricFamily
+from rctclient.types import BatteryModuleResistance, BatteryModuleStatus
+
 from .event_processor import EventBroadcaster, Event
 
 log = logging.getLogger(__name__)
+
+class CellInfo:
+    '''
+    Information about a single cell in a battery.
+    '''
+    voltage: Optional[float]
+    temperature: Optional[float]
+    resistance_ohm: Optional[float]
+
+    def __init__(self, voltage: Optional[float] = None, temperature: Optional[float] = None,
+                 resistance_ohm: Optional[float] = None) -> None:
+        self.voltage = voltage
+        self.temperature = temperature
+        self.resistance_ohm = resistance_ohm
+
+    def __repr__(self) -> str:
+        return f'<CellInfo("{self.voltage}V", "{self.temperature}°C", "{self.resistance_ohm}Ω")>'
 
 
 class BatteryInfo:
@@ -25,10 +44,16 @@ class BatteryInfo:
     num: int
     serial: str
     cycle_count: Optional[int] = None
+    cells: dict[int, CellInfo] = {}
+    min_voltage: Optional[float] = None
+    max_voltage: Optional[float] = None
+    min_temperature: Optional[float] = None
+    max_temperature: Optional[float] = None
 
     def __init__(self, num: int, serial: str) -> None:
         self.num = num
         self.serial = serial
+        self.cells = {}
 
     def __repr__(self) -> str:
         return f'<BatteryInfo({self.num}, "{self.serial}")>'
@@ -38,6 +63,27 @@ class BatteryInfo:
         Returns whether the information is complete.
         '''
         return self.cycle_count is not None
+
+    def populate_cells_from_status(self, status: BatteryModuleStatus) -> None:
+        '''
+        Populates ``cells`` from a decoded ``BatteryModuleStatus`` payload.
+        '''
+        for cell_id, cell in status.cells.items():
+            if cell_id not in self.cells:
+                self.cells[cell_id] = CellInfo(voltage=cell.voltage_v, temperature=cell.temperature_c)
+            else:
+                self.cells[cell_id].voltage = cell.voltage_v
+                self.cells[cell_id].temperature = cell.temperature_c
+
+    def populate_cells_resistance_from_status(self, status: BatteryModuleResistance) -> None:
+        '''
+        Populates cell resistances from a decoded ``BatteryModuleResistance`` payload.
+        '''
+        for cell_id, cell in status.cells.items():
+            if cell_id not in self.cells:
+                self.cells[cell_id] = CellInfo(resistance_ohm=cell.resistance_ohm)
+            else:
+                self.cells[cell_id].resistance_ohm = cell.resistance_ohm
 
 class AbstractReadings:
 

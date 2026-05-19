@@ -4,7 +4,7 @@ Tool to extract metrics from a single solar inverter by RCT Power GmbH, using th
 Protocol. The project is not in any way affiliated with or supported by RCT Power GmbH. Use at your own risk.
 
 It extracts a subset of the metrics available, mainly the most interesting ones that are presented to users in the
-official RCT smartphone apps overview screen.
+official RCT smartphone apps overview screen, but a fair amount of more detailed metrics as well.
 
 Data can be exposed via a [Prometheus](https://prometheus.io/) compatible endpoint or pushed to an
 [InfluxDB](https://www.influxdata.com/products/influxdb/) (versions 1.8 and 2.x), or both at the same time. The
@@ -14,6 +14,9 @@ stopped during firmware update as a precautionary measure.
 
 The project is still in its early stages of development. Metric names in the Prometheus export as well as measurement
 and field names pushed to InfluxDB may change without notice.
+
+The scope of InfluxDB and Prometheus exports diverge, new metrics are mostly added for Prometheus, because future of
+InfluxDB support is unclear.
 
 ## Installation
 
