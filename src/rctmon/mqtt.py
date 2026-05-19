@@ -19,9 +19,22 @@ class MqttClient(EventConsumer):
 
     def __init__(self, mqtt_config: MqttConfig):
         self.conf = mqtt_config
+        self._validate_config()
         self.topic_prefix = [self.conf.topic_prefix.strip("/")]
         if self.conf.enable:
             self.mqtt_client = self._connect()
+
+    def _validate_config(self):
+        if self.conf.enable:
+            if not self.conf.mqtt_host:
+                raise ValueError("mqtt_host must be set when mqtt is enabled")
+            if (not self.conf.auth_user and self.conf.auth_pass) or \
+               (self.conf.auth_user and not self.conf.auth_pass):
+                raise ValueError("only one of auth_pass and auth_user is set")
+            if self.conf.tls_enable and (
+                not self.conf.tls_certfile or
+                not self.conf.tls_keyfile):
+                raise ValueError("tls_certfile and tls_keyfile must be set when tls is enabled")
 
     def _connect(self) -> mqtt.Client:
         log.info('Mqtt endpoint is at %s', self.conf.mqtt_host)
