@@ -31,10 +31,11 @@ class MqttClient(EventConsumer):
             if (not self.conf.auth_user and self.conf.auth_pass) or \
                (self.conf.auth_user and not self.conf.auth_pass):
                 raise ValueError("only one of auth_pass and auth_user is set")
-            if self.conf.tls_enable and (
-                not self.conf.tls_certfile or
-                not self.conf.tls_keyfile):
-                raise ValueError("tls_certfile and tls_keyfile must be set when tls is enabled")
+            if (not self.conf.tls_certfile and self.conf.tls_keyfile) or \
+               (self.conf.tls_certfile and not self.conf.tls_keyfile):
+                raise ValueError("only one of tls_certfile and tls_keyfile is set")
+            if (self.conf.tls_certfile or self.conf.tls_keyfile) and not self.conf.tls_enable:
+                raise ValueError("tls_certfile and tls_keyfile are set but tls is not enabled")
 
     def _connect(self) -> mqtt.Client:
         log.info('Mqtt endpoint is at %s', self.conf.mqtt_host)
